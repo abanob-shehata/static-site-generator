@@ -1,4 +1,5 @@
 from textnode import *
+import re
 
 def split_nodes_delimiter(old_nodes : TextNode, delimiter, text_type):
     new_nodes = []
@@ -53,4 +54,14 @@ def check_merge(prob, delimiter):
     if len(prob) > 2:
         return [node1, node2] + check_merge(prob[2:], delimiter)
     return [node1, node2]
+
+def extract_markdown_images(text):
+    alt_text =  re.findall(r"\!\[(.*?)\]\(", text)
+    links = re.findall(r"\]\((http.*?)\)", text)
+    return list(map(lambda a, b: (a, b), alt_text, links))
+
+def extract_markdown_links(text):
+    alt_text =  re.findall(r"\[(.*?)\]\(", text)
+    links = re.findall(r"\]\((http.*?)\)", text)
+    return list(map(lambda a, b: (a, b), alt_text, links))
     
