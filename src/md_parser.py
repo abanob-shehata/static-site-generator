@@ -56,12 +56,8 @@ def check_merge(prob, delimiter):
     return [node1, node2]
 
 def extract_markdown_images(text):
-    alt_text =  re.findall(r"\!\[(.*?)\]\(", text)
-    links = re.findall(r"\]\((http.*?)\)", text)
-    return list(map(lambda a, b: (a, b), alt_text, links))
+    return re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
 
 def extract_markdown_links(text):
-    alt_text =  re.findall(r"\[(.*?)\]\(", text)
-    links = re.findall(r"\]\((http.*?)\)", text)
-    return list(map(lambda a, b: (a, b), alt_text, links))
+    return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\[\]]*)\)", text)
     
