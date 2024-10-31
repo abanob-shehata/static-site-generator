@@ -8,27 +8,32 @@ class HTMLNode:
         self.props = props
         
     def to_html(self):
-        raise NotImplementedError
+        raise NotImplementedError("to_html method not implemented")
     
     def props_to_html(self):
-        if isinstance(self.props, dict):
-            def prop_to_str(str1, key):
-                return str1 + f' {key}="{self.props[key]}"'
-            return reduce(prop_to_str, self.props, "")
-        raise ValueError("props needs to be a dictionary to call props_to_html")
+        if self.props is None:
+            return ""
+        def prop_to_str(str1, key):
+            return str1 + f' {key}="{self.props[key]}"'
+        return reduce(prop_to_str, self.props, "")
     
-    def __repr__(self):
-        child_num = prop_num = 0
-        if self.children:
-            child_num = len(self.children)
-        if self.props:
-            prop_num = len(self.props)
-            
+    def __repr__(self):            
         return (
             f"---  HTMLNode  ---\n"
             + f"* Tag: {self.tag}\n"
             + f"* Value: {self.value}\n"
-            + f"* Children: {child_num}\n"
-            + f"* Props: {prop_num}\n"
+            + f"* Children: {self.children}\n"
+            + f"* Props: {self.props}\n"
             + f"--- /HTMLNode  ---"
         )
+        
+class LeafNode(HTMLNode):
+    def __init__(self, tag, value, props=None):
+        super().__init__(tag, value, None, props)
+        
+    def to_html(self):
+        if not self.value:
+            raise ValueError("All leaf nodes must have a Value")
+        if self.tag is None:
+            return self.value
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
