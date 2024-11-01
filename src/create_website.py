@@ -40,4 +40,15 @@ def generate_page(from_path, template_path, dest_path):
         makedirs(dir)
     with open(dest_path,"w") as f:
         f.write(outoput_html)
-    
+        
+def generate_page_recursive(dir_path_content, template_path, dest_dir_path):
+    list = listdir(dir_path_content)
+    if len(list) == 0:
+        return
+    for item in list:
+        if isfile(dir_path_content + "/" + item):
+            if item[-2:] != "md":
+                continue
+            generate_page(dir_path_content + "/" + item, template_path, dest_dir_path + "/" + item[:-2] + "html")
+        else:
+            generate_page_recursive(dir_path_content + "/" + item, template_path, dest_dir_path + "/" + item)
