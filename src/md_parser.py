@@ -64,6 +64,9 @@ def extract_markdown_links(text):
 def split_nodes_image(old_nodes):
     new_nodes = []
     for node in old_nodes:
+        if node.text_type != TextType.TEXT.value:
+            new_nodes.append(node)
+            continue
         images = extract_markdown_images(node.text)
         if len(images) == 0:
             new_nodes.append(node)
@@ -84,6 +87,9 @@ def split_nodes_image(old_nodes):
 def split_nodes_link(old_nodes):
     new_nodes = []
     for node in old_nodes:
+        if node.text_type != TextType.TEXT.value:
+            new_nodes.append(node)
+            continue
         links = extract_markdown_links(node.text)
         if len(links) == 0:
             new_nodes.append(node)
@@ -119,18 +125,19 @@ def split_add_link(text, links):
         return [split_text[0], "LINK_TO_INSERT"] + split_add_link(split_text[1], links[1:])
     return [split_text[0], "LINK_TO_INSERT", split_text[1]]
 
+def text_to_textnodes(text):
+    nodes = [TextNode(text, TextType.TEXT)]
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes
+    
+
 # def main():
-#     node = TextNode(
-#         "This is text with an image ![to boot dev](https://www.boot.dev) and ![to youtube](https://www.youtube.com/@bootdotdev)",
-#         TextType.TEXT,
-#     )
-#     node2 = TextNode(
-#         "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
-#         TextType.TEXT,
-#     )
-#     new_nodes = split_nodes_image([node2])
-#     new_nodes2 = split_nodes_link([node2])
+#     text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+#     new_nodes = text_to_textnodes(text)
 #     print(new_nodes)
-#     print(new_nodes2)
 
 # main()
